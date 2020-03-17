@@ -6,6 +6,9 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
 
+RESULT_PATH = 'results/'
+
+
 def log_fft(image):
     amplitude_image = np.absolute(image)
     log_amplitude_image = np.real(np.log(amplitude_image + np.ones(image.shape)))
@@ -74,9 +77,9 @@ def _apply_fourier(rgb_image, gaussian_filter, name):
         filtered_rgb_image_fft[:, :, i] = filtered_image_fft
 
     if name == 'near':
-        show_fourier(log_fft(shifted_rgb_image), 'Q4_05_dft_near.jpg')
+        show_fourier(log_fft(shifted_rgb_image), RESULT_PATH + 'Q4_05_dft_near.jpg')
     else:
-        show_fourier(log_fft(shifted_rgb_image), 'Q4_06_dft_far.jpg')
+        show_fourier(log_fft(shifted_rgb_image), RESULT_PATH + 'Q4_06_dft_far.jpg')
 
     return filtered_rgb_image_fft
 
@@ -88,27 +91,27 @@ def _apply_cutoff(g_filter, cutoff):
 
 def get_low_pass_image(image, sigma, cutoff):
     gaussian_filter = get_gaussian_filter(image.shape[0], image.shape[1], sigma)
-    show_gaussian(gaussian_filter, 'Q4_08_lowpass_%d.jpg' % sigma)
+    show_gaussian(gaussian_filter, RESULT_PATH + 'Q4_08_lowpass_%d.jpg' % sigma)
 
     gaussian_filter = _apply_cutoff(gaussian_filter, cutoff)
-    show_gaussian(gaussian_filter, 'Q4_10_lowpass_cutoff.jpg')
+    show_gaussian(gaussian_filter, RESULT_PATH + 'Q4_10_lowpass_cutoff.jpg')
 
     low_pass_img = _apply_fourier(image, gaussian_filter, 'far')
-    show_fourier(log_fft(low_pass_img), 'Q4_12_lowpassed.jpg')
+    show_fourier(log_fft(low_pass_img), RESULT_PATH + 'Q4_12_lowpassed.jpg')
 
     return low_pass_img, gaussian_filter
 
 
 def get_high_pass_image(image, sigma, cutoff):
     gaussian_filter = get_gaussian_filter(image.shape[0], image.shape[1], sigma)
-    show_gaussian(1 - gaussian_filter, 'Q4_07_highpass_%d.jpg' % sigma)
+    show_gaussian(1 - gaussian_filter, RESULT_PATH + 'Q4_07_highpass_%d.jpg' % sigma)
     gaussian_filter = _apply_cutoff(gaussian_filter, cutoff)
-    show_gaussian(1 - gaussian_filter, 'Q4_09_highpass_cutoff.jpg')
+    show_gaussian(1 - gaussian_filter, RESULT_PATH + 'Q4_09_highpass_cutoff.jpg')
 
     gaussian_filter = 1 - gaussian_filter
 
     high_pass_img = _apply_fourier(image, gaussian_filter, 'near')
-    show_fourier(log_fft(high_pass_img), 'Q4_11_highpassed.jpg')
+    show_fourier(log_fft(high_pass_img), RESULT_PATH + 'Q4_11_highpassed.jpg')
 
     return high_pass_img, gaussian_filter
 
@@ -133,8 +136,8 @@ def output_vis(image, cnt=5):
 
 
 def _get_hybrid(low_pass_image, high_pass_image, low_pass_filter, high_pass_filter):
-    cv2.imwrite("Q4_low_pass_img.jpg", _inverse(low_pass_image))
-    cv2.imwrite("Q4_high_pass_img.jpg", _inverse(high_pass_image))
+    cv2.imwrite(RESULT_PATH + "Q4_low_pass_img.jpg", _inverse(low_pass_image))
+    cv2.imwrite(RESULT_PATH + "Q4_high_pass_img.jpg", _inverse(high_pass_image))
     mult_mtx = low_pass_filter * high_pass_filter
     low_pass_ratio = low_pass_filter + mult_mtx
     low_pass_ratio[low_pass_ratio > 1] = 0.5
@@ -144,7 +147,7 @@ def _get_hybrid(low_pass_image, high_pass_image, low_pass_filter, high_pass_filt
     for i in range(3):
         hybrid[:, :, i] = low_pass_ratio * low_pass_image[:, :, i] + high_pass_ratio * high_pass_image[:, :, i]
 
-    show_fourier(log_fft(hybrid), 'Q4_13_hybrid_frequency.jpg')
+    show_fourier(log_fft(hybrid), RESULT_PATH + 'Q4_13_hybrid_frequency.jpg')
     hybrid_image = _inverse(hybrid)
 
     return hybrid_image
@@ -210,8 +213,8 @@ if __name__ == "__main__":
     near, far = _matche_images(near, near_points, far, far_points)
     near = cv2.resize(near, (0, 0), fx=3, fy=3)
     far = cv2.resize(far, (0, 0), fx=3, fy=3)
-    cv2.imwrite("Q4_03_near.jpg", near)
-    cv2.imwrite("Q4_04_far.jpg", far)
+    cv2.imwrite(RESULT_PATH + "Q4_03_near.jpg", near)
+    cv2.imwrite(RESULT_PATH + "Q4_04_far.jpg", far)
 
     sigma_low, sigma_high = 30, 10
     cutoff_low, cutoff_high = 1/(2 * math.pi * sigma_low), 1/(2 * math.pi * sigma_high)
@@ -221,7 +224,7 @@ if __name__ == "__main__":
 
     hybrid_image = _get_hybrid(low_pass_image, high_pass_image, low_pass_filter, high_pass_filter)
 
-    cv2.imwrite("Q4_14_hybrid_near.jpg", hybrid_image)
-    cv2.imwrite("Q4_15_hybrid_far.jpg", cv2.resize(hybrid_image, (0, 0), fx=0.5 ** 4, fy=0.5 ** 4))
-    cv2.imwrite("Q4_scaled.jpg", output_vis(hybrid_image))
+    cv2.imwrite(RESULT_PATH + "Q4_14_hybrid_near.jpg", hybrid_image)
+    cv2.imwrite(RESULT_PATH + "Q4_15_hybrid_far.jpg", cv2.resize(hybrid_image, (0, 0), fx=0.5 ** 4, fy=0.5 ** 4))
+    cv2.imwrite(RESULT_PATH + "Q4_scaled.jpg", output_vis(hybrid_image))
 

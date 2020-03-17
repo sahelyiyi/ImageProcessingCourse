@@ -2,6 +2,7 @@ import cv2
 import math
 import numpy as np
 
+RESULT_PATH = 'results/'
 books = [
     [(809, 960),  (618, 663),  (407, 785),  (601, 1096)],
     [(146, 698),  (200, 415),  (403, 455),  (344, 736)],
@@ -53,7 +54,7 @@ if __name__ == "__main__":
 
         affined_img = cv2.warpAffine(img, M, (width, height))
 
-        cv2.imwrite('Q3_book%d.jpg' % (i+1), affined_img)
+        cv2.imwrite(RESULT_PATH + 'Q3_book%d.jpg' % (i+1), affined_img)
 
 
 

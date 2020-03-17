@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from PIL import Image
 
+IMAGE_PATH = 'results/'
 
 img_path = '01.png'
 img = cv2.imread(img_path)
@@ -25,8 +26,8 @@ for new, old in zip(next_points[points_status == 1], old_points[points_status ==
 
 result = cv2.add(old_img, mask)
 
-cv2.imwrite('im5.jpg', result)
+cv2.imwrite(IMAGE_PATH + 'im5.jpg', result)
 
 flow_img0 = Image.fromarray(result)
 flow_img1 = Image.fromarray(new_img)
-flow_img0.save('flow.gif', format='GIF', append_images=[flow_img1], save_all=True, duration=500, loop=0)
+flow_img0.save(IMAGE_PATH + 'flow.gif', format='GIF', append_images=[flow_img1], save_all=True, duration=500, loop=0)

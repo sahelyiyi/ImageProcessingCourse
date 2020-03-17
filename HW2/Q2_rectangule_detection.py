@@ -13,6 +13,7 @@ from collections import defaultdict
 
 INF = 1000000
 sigma = 3
+RESULT_PATH = 'results/'
 
 
 def show_matrix(x, y, g, name):
@@ -21,7 +22,7 @@ def show_matrix(x, y, g, name):
     surf = ax.plot_surface(x, y, g, rstride=1, cstride=1,
                     cmap='viridis', edgecolor='none')
     ax.set_title('surface')
-    plt.savefig('Q1-%s.jpg' % name)
+    plt.savefig(RESULT_PATH + 'Q1-%s.jpg' % name)
 
 
 def get_gaussian_filter(sigma):
@@ -41,13 +42,13 @@ def separate_matrix(m, prefix):
     u = u[:, 0] * math.sqrt(s[0])
     plt.figure()
     plt.plot(u)
-    plt.savefig('Q1-u%s.jpg' % prefix)
+    plt.savefig(RESULT_PATH + 'Q1-u%s.jpg' % prefix)
     u = u.reshape(u.shape[0], 1)
 
     v = v[0, :] * math.sqrt(s[0])
     plt.figure()
     plt.plot(v)
-    plt.savefig('Q1-v%s.jpg' % prefix)
+    plt.savefig(RESULT_PATH + 'Q1-v%s.jpg' % prefix)
     v = v.reshape(1, v.shape[0])
     return u, v
 
@@ -129,7 +130,7 @@ def _unique_lines(lines, img):
     for i in uniques:
         l = lines[i][0]
         cv2.line(new_img, (l[0], l[1]), (l[2], l[3]), (0, 0, 255), 1)
-    cv2.imwrite('Q2_uniques.jpg', new_img)
+    cv2.imwrite(RESULT_PATH + 'Q2_uniques.jpg', new_img)
 
     uniques = _remove_outliers(uniques, lines)
 
@@ -137,7 +138,7 @@ def _unique_lines(lines, img):
     for i in uniques:
         l = lines[i][0]
         cv2.line(new_img, (l[0], l[1]), (l[2], l[3]), (0, 0, 255), 1)
-    cv2.imwrite('Q2_inliers.jpg', new_img)
+    cv2.imwrite(RESULT_PATH + 'Q2_inliers.jpg', new_img)
 
     return uniques
 
@@ -217,7 +218,7 @@ new_img = img.copy()
 for item in lines:
     l = item[0]
     cv2.line(new_img, (l[0], l[1]), (l[2], l[3]), (0, 0, 255), 1)
-cv2.imshow('Q2_lines.jpg', new_img)
+cv2.imshow(RESULT_PATH + 'Q2_lines.jpg', new_img)
 
 uniques = _unique_lines(lines, img.copy())
 
